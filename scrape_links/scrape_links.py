@@ -42,7 +42,7 @@ for p, f in platforms.items():
     for topic, term_d in progressbar:
         for lang, term in term_d.items():
             progressbar.set_description(f"topic={topic}, lang={lang}")
-            links = get_links(platform=p, query=f, n=1, term=term, driver=driver)
+            links, driver = get_links(platform=p, query=f, n=1, term=term, driver=driver)
             for l in links[:num_links]:
                 records.append(
                     dict(
@@ -53,6 +53,7 @@ for p, f in platforms.items():
                          link=l
                     )
                 )
+        print(records)
                 
     joblib.dump(records, f"records_{p}.pkl")
     

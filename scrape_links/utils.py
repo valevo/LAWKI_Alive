@@ -8,7 +8,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 
-from urllib3 import ConnectionRefusedError
+from urllib3 import *
+
 
 
 from urllib.parse import quote as url_quote
@@ -77,31 +78,32 @@ def click_button_if_exists(page, driver, do_quick_check=True):
 def safe_get(driver, url):
     try:
         driver.get(url)
-        return driver.page_source
+        return driver.page_source, driver
     except TimeoutException:
         print("!! "*20)
         print("TIMEOUT HAPPENED! WAITING 10 SECONDS THEN RESTARTING DRIVER")
         driver.quit()
         sleep(10)
         driver = webdriver.Firefox()
-        driver.get(url)
-        return driver.page_source
-    except ConnectionRefusedError:
-        print("!! "*20)
-        print("CONNECTIONREFUSED HAPPENED! WAITING 10 SECONDS THEN RETURNING NONE")
-        sleep(10)
-        return None
+        return None, driver
+        
 #         driver.get(url)
-#         return driver.page_source
+#         return driver.page_source, driver
+#     except ConnectionRefusedError:
+#         print("!! "*20)
+#         print("CONNECTIONREFUSED HAPPENED! WAITING 10 SECONDS THEN RETURNING NONE")
+#         sleep(10)
+#         return None
+# #         driver.get(url)
+# #         return driver.page_source
 
         
 
 def request_and_scroll(url, num_scrolls=0, driver=None, is_youtube=False):
     page = None
     while page is None:
-        page = safe_get(driver, url)
-        
-    
+        page, driver = safe_get(driver, url)
+   
     if is_youtube:
         clicked = click_button_if_exists(page, driver, do_quick_check=True)
         
@@ -111,7 +113,7 @@ def request_and_scroll(url, num_scrolls=0, driver=None, is_youtube=False):
 
 #     driver.close()
     
-    return page
+    return page, driver
 
 
 ######################################
@@ -138,7 +140,7 @@ def get_links(driver=None, platform=None, query=None, term=None, n=10):
     
     url = query(url_quote(term))
     
-    result_page = request_and_scroll(query(term), 
+    result_page, driver = request_and_scroll(query(term), 
                                      num_scrolls=n, 
                                      driver=driver, 
                                      is_youtube=(platform == "youtube"))
@@ -155,4 +157,4 @@ def get_links(driver=None, platform=None, query=None, term=None, n=10):
         return [None]
     
     
-    return find_video_links(result_page, r)
+    return find_video_links(result_page, r), driver
