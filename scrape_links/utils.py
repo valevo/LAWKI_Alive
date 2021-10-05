@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup as bs4
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
 
 
 from urllib.parse import quote as url_quote
@@ -50,13 +51,32 @@ def click_button_if_exists(driver, do_quick_check=True):
     except NoSuchElementException:
         return False
 
+    
+
+def safe_get(driver, url, tries=5):
+    try:
+        driver.get(url)
+    except TimeoutException:
+        print("!! "*20)
+        print("TIMEOUT HAPPENED! WAITING 10 SECONDS THEN RESTARTING DRIVER")
+        driver.quit()
+        sleep(10)
+        print("WAITING DONE!)
+        
+        driver = webdriver.Firefox()
+        driver.get(url)
+        print("GET DONE!")
+        
+#         print(f"TIMEOUT HAPPENED! WAITING 10 SECONDS, TRYING {tries} TIMES!")
+#         sleep(10)
+        
+        
 
 def request_and_scroll(url, num_scrolls=1, driver=None, is_youtube=False):
-    if not driver:
-#         driver = webdriver.Firefox()
-        pass
-        
-    driver.get(url)
+    
+    safe_get(driver, url)
+    
+    
     if is_youtube:
         clicked = click_button_if_exists(driver, do_quick_check=True)
         
