@@ -140,11 +140,13 @@ def get_links(driver=None, platform=None, query=None, term=None, n=10):
     
     url = query(url_quote(term))
     
-    result_page, driver = request_and_scroll(query(term), 
+    result_page, driver = request_and_scroll(url, #query(term), 
                                      num_scrolls=n, 
                                      driver=driver, 
                                      is_youtube=(platform == "youtube"))
     
+    if platform == "dailymotion":
+        print(len(result_page))
     
     if platform == "youtube":
         r = youtube_regex
@@ -154,7 +156,7 @@ def get_links(driver=None, platform=None, query=None, term=None, n=10):
         raise ValueError(f"given platform {platform} is not defined!")
     
     if check_no_results(result_page, platform):
-        return [None]
+        return None
     
     
     return find_video_links(result_page, r), driver
