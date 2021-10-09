@@ -75,7 +75,7 @@ def dm_expand(_id): return f"https://www.dailymotion.com/video/{_id}"
 
 
 videos = pd.read_csv("links_filled.csv")
-
+shuffled = videos.iloc[np.loadtxt("links_perm_inds.txt").astype("int")]
 videos = videos[videos.link != "_"]
 
 print(f"total of {videos.shape[0]} videos to be downloaded")
