@@ -250,6 +250,8 @@ class DecoyRW(RW):
     def __init__(self, n_neighbours=100, directory="./", space=None, meta=None):
         super().__init__(is_2D=True, directory=directory, space=space, meta=meta)
         
+        self.meta = list(self.meta.links)
+        
 #         self.n_neighbours = n_neighbours
         
 #         self.cur = rand.randint(self.n)
@@ -259,7 +261,8 @@ class DecoyRW(RW):
             
     def step(self, i):
         self.cur = rand.randint(self.n)
-        cur_row = self.meta.iloc[self.cur]
+        
+        cur_row = self.meta[self.cur]
 
         return self.cur, cur_row, self.sample_duration(cur_row)
     
