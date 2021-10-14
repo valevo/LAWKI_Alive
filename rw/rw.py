@@ -266,3 +266,15 @@ class DecoyRW(RW):
 
         return self.cur, cur_row, self.sample_duration(cur_row)
     
+    
+class MyRow:
+    def __init__(self):
+        self.link = "0vOKNnul0BQ"
+        self.views = 13
+    
+class NoRW:
+    def __init__(self, directory=None):
+        self.cur = MyRow()
+    
+    def step(self, i):
+        return 0, self.cur, (0, 1)
